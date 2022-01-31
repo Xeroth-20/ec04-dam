@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="firstname_min_chars">2</integer>
+    <integer name="firstname_max_chars">26</integer>
+    <integer name="lastname_min_chars">2</integer>
+    <integer name="lastname_max_chars">26</integer>
+    <integer name="password_min_chars">8</integer>
+    <integer name="password_max_chars">24</integer>
+    <integer name="phone_number_length">9</integer>
+</resources>

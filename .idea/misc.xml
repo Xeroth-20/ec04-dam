@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/background_bordered_rounded.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/background_form_section.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/background_posts_details_body.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/background_posts_details_card.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/background_splash_screen.xml" value="0.37222222222222223" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/divider_16.xml" value="0.3769230769230769" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/form_section_background.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.37222222222222223" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/ic_baseline_arrow_back_24.xml" value="0.37222222222222223" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/ic_baseline_email_24.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/ic_baseline_google_24.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/ic_baseline_lock_24.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.37222222222222223" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/ic_baseline_view_agenda_24.xml" value="0.37222222222222223" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/ic_heart_outline_24.xml" value="0.37592592592592594" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/ic_launcher_background.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/ic_outline_heart_24.xml" value="0.37592592592592594" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/drawable/ic_search_pets.xml" value="0.14" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/layout/activity_create_post.xml" value="0.3453111305872042" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/layout/activity_post_details.xml" value="0.33" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/layout/activity_search_result.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/layout/activity_sign_in.xml" value="0.33" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/layout/activity_sign_up.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/layout/activity_signin.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/layout/app_bar_top_back_navigation.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/layout/card_post.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/layout/dropdown_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/layout/header_navigation_drawer.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/layout/splash_screen.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/menu/menu_drawer_navigation.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/menu/menu_navigation_drawer.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/menu/menu_post_details.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Hugo/Documents/Stuff/IDAT/Ciclo 5/Desarrollo de aplicaciones moviles I/EC04/app/src/main/res/menu/menu_top_appbar.xml" value="0.36666666666666664" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
