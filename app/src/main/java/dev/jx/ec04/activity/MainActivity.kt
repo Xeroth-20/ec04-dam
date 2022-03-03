@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getPosts(cb: (posts: List<Post>?) -> Unit) {
-        postsReference.orderByChild("createdAt").limitToFirst(10).get()
+        postsReference.orderByChild("createdAt").limitToLast(10).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "Retrieving posts data: success")
