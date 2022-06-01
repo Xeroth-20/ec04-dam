@@ -13,6 +13,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dev.jx.ec04.databinding.ActivitySignUpBinding
 import dev.jx.ec04.entity.User
+import dev.jx.ec04.util.UserUtils
 import dev.jx.ec04.validation.UserValidationUtils
 import dev.jx.ec04.validation.ValidationResult
 
@@ -146,22 +147,19 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun createUser(user: User, password: String) {
         auth.createUserWithEmailAndPassword(user.email!!, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val uid = task.result.user!!.uid
-                    usersReference.child(uid).setValue(user)
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                navigateToMain()
-                            } else {
-                                Log.w(TAG, "Create user in database: failure", it.exception)
-                                task.result.user!!.delete()
-                            }
-                        }
-                } else {
-                    Log.w(TAG, "Create user with email and password: failure", task.exception)
-                    showUserCreationFailureToast()
-                }
+            .addOnSuccessListener {
+                val uid = it.user!!.uid
+                usersReference.child(uid).setValue(user)
+                    .addOnSuccessListener {
+                        UserUtils.saveUserToSharedPreferences(this, user)
+                        navigateToMain()
+                    }.addOnFailureListener { ex ->
+                        Log.w(TAG, "Create user in database: failure", ex)
+                        it.user!!.delete()
+                    }
+            }.addOnFailureListener {
+                Log.w(TAG, "Create user with email and password: failure", it)
+                showUserCreationFailureToast()
             }
     }
 

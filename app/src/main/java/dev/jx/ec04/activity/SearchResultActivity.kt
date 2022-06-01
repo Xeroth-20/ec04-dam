@@ -1,11 +1,13 @@
 package dev.jx.ec04.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -26,6 +28,7 @@ class SearchResultActivity : AppCompatActivity() {
     private lateinit var usersPostsReference: DatabaseReference
     private var searchFor: SearchFor? = null
     private var payload: String? = null
+    private val postCardAdapter = PostCardAdapter(mutableListOf(), null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +73,7 @@ class SearchResultActivity : AppCompatActivity() {
                 )
             )
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            adapter = postCardAdapter
         }
 
         when (searchFor) {
@@ -100,11 +104,17 @@ class SearchResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun setSearchResult(posts: List<Post>) {
+    private fun setSearchResult(posts: List<Post>, myPosts: Boolean = false) {
         if (posts.isNotEmpty()) {
+            val listener = if (myPosts) object : PostCardAdapter.OnItemListener {
+                override fun onItemLongClick(post: Post) {
+                    openPostMenu(post)
+                }
+            } else null
             binding.noResultFoundFrameLayout.visibility = View.GONE
             binding.recyclerScrollView.visibility = View.VISIBLE
-            binding.cardPostRecyclerView.adapter = PostCardAdapter(posts)
+            postCardAdapter.setItems(posts.toMutableList())
+            postCardAdapter.setOnItemListener(listener)
         } else {
             binding.recyclerScrollView.visibility = View.GONE
             binding.noResultFoundFrameLayout.visibility = View.VISIBLE
@@ -148,10 +158,45 @@ class SearchResultActivity : AppCompatActivity() {
                     val posts = task.result.children
                         .map { it.getValue(Post::class.java)!! }
                         .reversed()
-                    setSearchResult(posts)
+                    setSearchResult(posts, true)
                 } else {
                     Log.w(TAG, "Retrieving user posts data: failure", task.exception)
                 }
+            }
+    }
+
+    private fun openPostMenu(post: Post) {
+        MaterialAlertDialogBuilder(this)
+            .setItems(arrayOf("Editar publicación", "Borrar publicación")) { dialog, which ->
+                when (which) {
+                    0 -> navigateToEditPost(post)
+                    1 -> deletePost(post)
+                    else -> dialog.dismiss()
+                }
+            }.show()
+    }
+
+    private fun navigateToEditPost(post: Post) {
+        val intent = Intent(this, CreatePostActivity::class.java)
+            .putExtra("isEditMode", true)
+            .putExtra("post", post)
+        startActivity(intent)
+    }
+
+    private fun deletePost(post: Post) {
+        val databaseReference = Firebase.database.reference
+        val postsPath = getString(R.string.posts_reference)
+        val userPostsPath = "${getString(R.string.users_posts_reference)}/${auth.currentUser!!.uid}"
+        val postData = mapOf(
+            "$postsPath/${post.id!!}" to null,
+            "$userPostsPath/${post.id!!}" to null
+        )
+
+        databaseReference.updateChildren(postData)
+            .addOnSuccessListener {
+                postCardAdapter.deleteItem(post)
+            }.addOnFailureListener { ex ->
+                Log.w(TAG, "Deleting post: failure", ex)
             }
     }
 

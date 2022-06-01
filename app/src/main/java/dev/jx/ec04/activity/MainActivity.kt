@@ -20,6 +20,7 @@ import dev.jx.ec04.entity.Post
 import dev.jx.ec04.entity.User
 import dev.jx.ec04.recycler.PostCardAdapter
 import dev.jx.ec04.recycler.PostCardItemDecoration
+import dev.jx.ec04.util.UserUtils
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var usersReference: DatabaseReference
     private lateinit var postsReference: DatabaseReference
     private lateinit var user: User
+    private val postCardAdapter = PostCardAdapter(mutableListOf(), null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                     false
                 }
                 R.id.menu_item_logout -> {
+                    UserUtils.removeUserFromSharedPreferences(this)
                     auth.signOut()
                     navigateToSignIn()
                     false
@@ -77,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             getPosts { posts ->
                 posts?.let {
-                    binding.cardPostRecyclerView.swapAdapter(PostCardAdapter(posts), true)
+                    postCardAdapter.setItems(posts.toMutableList())
                 }
                 binding.swipeRefreshLayout.isRefreshing = false
             }
@@ -128,6 +131,7 @@ class MainActivity : AppCompatActivity() {
                 )
             )
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            adapter = postCardAdapter
         }
 
         binding.createPostFab.setOnClickListener {
@@ -147,7 +151,7 @@ class MainActivity : AppCompatActivity() {
 
         getPosts { posts ->
             posts?.let {
-                binding.cardPostRecyclerView.adapter = PostCardAdapter(posts)
+                postCardAdapter.setItems(posts.toMutableList())
             }
         }
     }

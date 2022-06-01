@@ -22,6 +22,7 @@ import com.google.firebase.ktx.Firebase
 import dev.jx.ec04.R
 import dev.jx.ec04.databinding.ActivitySignInBinding
 import dev.jx.ec04.entity.User
+import dev.jx.ec04.util.UserUtils
 import java.util.concurrent.Executor
 
 class SignInActivity : AppCompatActivity() {
@@ -40,15 +41,17 @@ class SignInActivity : AppCompatActivity() {
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
                             Log.d(TAG, "Sign in with google: success")
+                            val user = User(
+                                account.givenName,
+                                account.familyName,
+                                account.email
+                            )
+
                             if (it.result.additionalUserInfo!!.isNewUser) {
-                                val user = User(
-                                    account.givenName,
-                                    account.familyName,
-                                    account.email
-                                )
                                 usersReference.child(it.result.user!!.uid).setValue(user)
                                     .addOnCompleteListener { usrCreationTask ->
                                         if (usrCreationTask.isSuccessful) {
+                                            UserUtils.saveUserToSharedPreferences(this, user)
                                             navigateToMain()
                                         } else {
                                             Log.w(
@@ -60,6 +63,7 @@ class SignInActivity : AppCompatActivity() {
                                         }
                                     }
                             } else {
+                                UserUtils.saveUserToSharedPreferences(this, user)
                                 navigateToMain()
                             }
                         } else {
@@ -135,20 +139,29 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun signInWithEmailAndPassword(email: String, password: String) {
-        if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
+        if (email.isEmpty() || password.isEmpty()) {
             showBadAuthenticationToast()
-        } else {
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d(TAG, "Sign in with email and password: success")
-                        navigateToMain()
-                    } else {
-                        Log.w(TAG, "Sign in with email and password: failure", task.exception)
-                        showBadAuthenticationToast()
-                    }
-                }
+            return;
         }
+
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                val id = it.user!!.uid
+                usersReference.child(id).get()
+                    .addOnSuccessListener { result ->
+                        if (result.exists()) {
+                            Log.d(TAG, "Sign in with email and password: success")
+                            val user = result.getValue(User::class.java)!!
+                            UserUtils.saveUserToSharedPreferences(this, user)
+                            navigateToMain()
+                        } else {
+                            showBadAuthenticationToast()
+                        }
+                    }
+            }.addOnFailureListener {
+                Log.w(TAG, "Sign in with email and password: failure", it)
+                showBadAuthenticationToast()
+            }
     }
 
     private fun signInWithGoogle() {

@@ -20,6 +20,8 @@ import com.squareup.picasso.Picasso
 import dev.jx.ec04.R
 import dev.jx.ec04.databinding.ActivityCreatePostBinding
 import dev.jx.ec04.entity.Post
+import dev.jx.ec04.entity.User
+import dev.jx.ec04.util.UserUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,6 +32,9 @@ class CreatePostActivity : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference
     private lateinit var postsStorageReference: StorageReference
     private var postImageUri: Uri? = null
+    private var user: User? = null
+    private var currentPost: Post? = null
+    private var isEditMode = false
 
     private val selectPictureResultLauncher =
         registerForActivityResult(StartActivityForResult()) { result ->
@@ -57,6 +62,15 @@ class CreatePostActivity : AppCompatActivity() {
         binding = ActivityCreatePostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        isEditMode = intent.getBooleanExtra("isEditMode", false)
+        user = UserUtils.getUserFromSharedPreferences(this)
+
+        if (isEditMode) {
+            binding.topAppBar.title = "Editar publicación"
+            binding.mainBtn.text = "Actualizar publicación"
+            currentPost = intent.getParcelableExtra("post")
+        }
+
         auth = Firebase.auth
         databaseReference = Firebase.database.reference
         postsStorageReference =
@@ -79,6 +93,25 @@ class CreatePostActivity : AppCompatActivity() {
         binding.petSexAutoComplete.setAdapter(petSexAdapter)
         binding.petStageAutoComplete.setAdapter(petStageAdapter)
 
+        if (isEditMode) {
+            currentPost?.let {
+                Picasso.get().load(it.imageUrl).error(R.drawable.default_image)
+                    .into(binding.petImageView)
+                binding.petNameInputEditText.setText(it.petName)
+                binding.petAnimalAutoComplete.setText(it.petAnimal)
+                binding.petSexAutoComplete.setText(it.petSex)
+                binding.petStageAutoComplete.setText(it.petStage)
+                binding.petStoryInputEditText.setText(it.petStory)
+                binding.petAgeInputEditText.setText(it.petAge.toString())
+                binding.petWeightInputEditText.setText(it.petWeight.toString())
+                binding.stateInputEditText.setText(it.state)
+                binding.cityInputEditText.setText(it.city)
+                binding.phoneNumberInputEditText.setText(it.contact)
+            }
+        } else {
+            binding.phoneNumberInputEditText.setText(user?.phoneNumber)
+        }
+
         binding.topAppBar.setNavigationOnClickListener {
             finish()
         }
@@ -96,6 +129,7 @@ class CreatePostActivity : AppCompatActivity() {
         binding.mainBtn.setOnClickListener {
             binding.mainBtn.isEnabled = false
 
+            val id = currentPost?.id
             val petName = binding.petNameInputEditText.text.toString()
             val petAnimal = binding.petAnimalAutoComplete.text.toString()
             val petAge = binding.petAgeInputEditText.text.toString()
@@ -105,10 +139,12 @@ class CreatePostActivity : AppCompatActivity() {
             val petStory = binding.petStoryInputEditText.text.toString()
             val state = binding.stateInputEditText.text.toString()
             val city = binding.cityInputEditText.text.toString()
+            val contact = binding.phoneNumberInputEditText.text.toString()
             val createdAt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:sss'Z'").format(Date())
 
-            createPost(
+            savePost(
                 Post(
+                    id,
                     auth.currentUser!!.uid,
                     petName,
                     petAnimal,
@@ -119,55 +155,76 @@ class CreatePostActivity : AppCompatActivity() {
                     petStory,
                     state,
                     city,
-                    createdAt = createdAt
+                    contact,
+                    imageUrl = currentPost?.imageUrl,
+                    createdAt = if (isEditMode) currentPost?.createdAt else createdAt
                 ),
-                postImageUri!!
+                postImageUri,
+                binding.phoneNumberCheckbox.isChecked
             )
         }
     }
 
-    private fun createPost(post: Post, postImageUri: Uri) {
+    private fun savePost(post: Post, postImageUri: Uri?, saveContact: Boolean) {
+        val userPhoneNumberPath =
+            "${getString(R.string.users_reference)}/${auth.currentUser!!.uid}/phoneNumber"
         val postsPath = getString(R.string.posts_reference)
         val userPostsPath = "${getString(R.string.users_posts_reference)}/${auth.currentUser!!.uid}"
-        val postId = UUID.randomUUID().toString()
-        val postData = mapOf(
-            "$postsPath/$postId" to post,
-            "$userPostsPath/$postId" to post
+
+        if (!isEditMode) {
+            val postId = UUID.randomUUID().toString()
+            post.id = postId
+        }
+
+        val postData = mutableMapOf<String, Any?>(
+            "$postsPath/${post.id!!}" to post,
+            "$userPostsPath/${post.id!!}" to post
         )
 
-        val handleOnCreatePost = OnCompleteListener<Void> { task ->
+        if (saveContact) {
+            postData[userPhoneNumberPath] = post.contact
+        }
+
+        val handleOnSavePost = OnCompleteListener<Void> { task ->
             if (task.isSuccessful) {
-                Log.d(TAG, "Create post in database: success")
-                Toast.makeText(this, "Publicación creada", Toast.LENGTH_SHORT).show()
-                finish()
+                Log.d(TAG, "Save post in database: success")
+                Toast.makeText(this, "Publicación guardada", Toast.LENGTH_SHORT).show()
+
+                if (saveContact) {
+                    user?.phoneNumber = post.contact
+                    UserUtils.saveUserToSharedPreferences(this, user!!)
+                }
+
+                if (!isEditMode) finish()
+                else binding.mainBtn.isEnabled = true
             } else {
-                Log.w(TAG, "Create post in database: failure", task.exception)
+                Log.w(TAG, "Save post in database: failure", task.exception)
                 showPostCreationFailureToast()
                 binding.mainBtn.isEnabled = true
             }
         }
 
-        postsStorageReference.child(UUID.randomUUID().toString()).putFile(postImageUri)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "Upload post image to storage: success")
-                    task.result.storage.downloadUrl
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                post.imageUrl = it.result.toString()
+        if (postImageUri != null) {
+            postsStorageReference.child(UUID.randomUUID().toString()).putFile(postImageUri)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "Upload post image to storage: success")
+                        task.result.storage.downloadUrl
+                            .addOnSuccessListener {
+                                post.imageUrl = it.toString()
                                 databaseReference.updateChildren(postData)
-                                    .addOnCompleteListener(handleOnCreatePost)
-                            } else {
-                                Log.w(TAG, "Get post image url: failure", it.exception)
+                                    .addOnCompleteListener(handleOnSavePost)
                             }
-                        }
-
-                } else {
-                    Log.w(TAG, "Upload post image to storage: failure", task.exception)
-                    showPostCreationFailureToast()
-                    binding.mainBtn.isEnabled = true
+                    } else {
+                        Log.w(TAG, "Upload post image to storage: failure", task.exception)
+                        showPostCreationFailureToast()
+                        binding.mainBtn.isEnabled = true
+                    }
                 }
-            }
+        } else {
+            databaseReference.updateChildren(postData)
+                .addOnCompleteListener(handleOnSavePost)
+        }
     }
 
     private fun showPostCreationFailureToast() {
@@ -175,7 +232,7 @@ class CreatePostActivity : AppCompatActivity() {
             this,
             "Ocurrió un error al crear la publicación",
             Toast.LENGTH_SHORT
-        )
+        ).show()
     }
 
     companion object {
